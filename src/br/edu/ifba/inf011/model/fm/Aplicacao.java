@@ -1,7 +1,13 @@
 package br.edu.ifba.inf011.model.fm;
 
+import java.time.LocalDate;
+
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
 
 import br.edu.ifba.inf011.academico.DatabaseAcademico;
 import br.edu.ifba.inf011.model.Calendario;
@@ -15,6 +21,9 @@ import br.edu.ifba.inf011.model.evento.Lembrete;
 import br.edu.ifba.inf011.model.evento.Partida;
 import br.edu.ifba.inf011.model.evento.TipoEvento;
 import br.edu.ifba.inf011.model.evento.builder.BuilderPartida;
+import br.edu.ifba.inf011.model.strategy.FormaEnvioStrategy;
+import br.edu.ifba.inf011.model.factory.NotificacaoStrategyFactory;
+import br.edu.ifba.inf011.model.observer.GoogleCalendarObserver;
 
 public class Aplicacao extends AplicacaoCalendario{
 
@@ -67,11 +76,30 @@ public class Aplicacao extends AplicacaoCalendario{
 		for(Evento e : hoje)
 			System.out.println(e.getDescricao());
 		
-		Notificador notificador = new Notificador();
-		
-		for(Evento e : hoje)
-		notificador.notificar(e);
-		
+		//podemos ter classes handlers inves de codiçoes estaticas
+		List<Predicate<Evento>> condicoesWhatsApp = new ArrayList<>();
+        condicoesWhatsApp.add(evento -> evento.getPrioridade() == 10 && evento.iniciaEm(LocalDate.now()));
+        condicoesWhatsApp.add(evento -> evento.getPrioridade() == 5 && evento.iniciaEm(LocalDate.now()));
+
+        List<Predicate<Evento>> condicoesEmail = new ArrayList<>();
+        condicoesEmail.add(evento -> evento.getPrioridade() >= 5 && evento.iniciaEm(LocalDate.now()));
+        condicoesEmail.add(evento -> evento.getPrioridade() >= 1 && evento.getPrioridade() < 5 &&
+                                              evento.iniciaEntre(LocalDateTime.now().minus(2, ChronoUnit.DAYS), LocalDateTime.now()));
+
+        // Criação das estratégias usando a fábrica
+        FormaEnvioStrategy estrategiaWhatsApp = NotificacaoStrategyFactory.criarEstrategiaWhatsApp(condicoesWhatsApp, null, true);
+        FormaEnvioStrategy estrategiaEmail = NotificacaoStrategyFactory.criarEstrategiaEmail(condicoesEmail, estrategiaWhatsApp, true);
+
+
+        
+		for (Evento e : hoje) {
+			
+	            GoogleCalendarObserver googleCalendarObserver = new GoogleCalendarObserver(estrategiaEmail);
+	            Notificador notificador = new Notificador(googleCalendarObserver);
+	            notificador.notificar(e);
+	        
+			
+		}
 		
 	}
 	

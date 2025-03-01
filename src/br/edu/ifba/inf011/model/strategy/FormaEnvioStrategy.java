@@ -4,7 +4,9 @@ import br.edu.ifba.inf011.model.evento.Evento;
 
 public interface FormaEnvioStrategy {
 	
-	String formatarMensagem(Evento e);
-    void enviarMensagem(String mensagem);
+	String formatarMensagem(String m);
+    void enviarMensagem(Evento e);
+    boolean deveAplicar(Evento e);
+    boolean deveAdicionarAoGoogleCalendar();
 
 }
