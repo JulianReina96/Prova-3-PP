@@ -7,6 +7,7 @@ import br.edu.ifba.inf011.academico.DatabaseAcademico;
 import br.edu.ifba.inf011.model.Calendario;
 import br.edu.ifba.inf011.model.Equipe;
 import br.edu.ifba.inf011.model.Geolocalizacao;
+import br.edu.ifba.inf011.model.Notificador;
 import br.edu.ifba.inf011.model.adapter.AulaObjectAdapter;
 import br.edu.ifba.inf011.model.decorator.OnlineCalendarioDecorator;
 import br.edu.ifba.inf011.model.evento.Evento;
@@ -37,22 +38,24 @@ public class Aplicacao extends AplicacaoCalendario{
 		
 		DatabaseAcademico database = new DatabaseAcademico();
 		
+		
+		
 		this.adicionarEvento(((BuilderPartida) 
-				  			   Partida.builder()
+				  			   Partida.builder().init()
 				  					  .setInicio(LocalDateTime.of(1970, 6, 21, 12, 0))
 				  					  .setLocalizacao(new Geolocalizacao("Estádio Azteca - Cidade do México")))
 					  				  .setPlacar(4, 1)
 					  				  .build("Final da Copa do Mundo de 1970", new Equipe("Brasil"), new Equipe("Italia")));
 		
-		this.adicionarEvento(Lembrete.builder()
+		this.adicionarEvento(Lembrete.builder().init()
 							.setInicio(LocalDateTime.of(2025, 02, 03, 19, 30))
 							.build(TipoEvento.LEMBRETE, "Avaliação II de Padrões de Projeto"));
 		
-		this.adicionarEvento(Lembrete.builder()
+		this.adicionarEvento(Lembrete.builder().init()
 				.setInicio(LocalDateTime.now())
 				.build(TipoEvento.LEMBRETE, "Reunião Semanal"));
 		
-		this.adicionarEvento(Lembrete.builder()
+		this.adicionarEvento(Lembrete.builder().init()
 				.setInicio(LocalDateTime.of(2025, 02, 28, 19, 30))
 				.build(TipoEvento.LEMBRETE, "Avaliação III de Padrões de Projeto"));
 		
@@ -63,6 +66,12 @@ public class Aplicacao extends AplicacaoCalendario{
 		
 		for(Evento e : hoje)
 			System.out.println(e.getDescricao());
+		
+		Notificador notificador = new Notificador();
+		
+		for(Evento e : hoje)
+		notificador.notificar(e);
+		
 		
 	}
 	

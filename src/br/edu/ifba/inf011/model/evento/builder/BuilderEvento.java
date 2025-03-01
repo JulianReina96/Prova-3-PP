@@ -22,7 +22,7 @@ public class BuilderEvento {
 	public BuilderEvento  init() {
 		this.inicio = LocalDateTime.now();
 		this.localizacao = Geolocalizacao.here();
-		this.prioridade = 5;
+		this.prioridade = 10;
 		return this;
 	}	
 	
