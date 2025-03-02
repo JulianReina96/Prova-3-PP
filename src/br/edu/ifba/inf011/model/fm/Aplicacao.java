@@ -71,6 +71,7 @@ public class Aplicacao extends AplicacaoCalendario {
         Notificador notify = new GoogleCalendarHandler(
                 new WhatsappHandler(List.of(new Prior5AndNowStrategy()), new EmailHandler()
                 ));
+
         for (Evento e : hoje) {
             System.out.println(e.getDescricao());
             notify.Notificar(e);
