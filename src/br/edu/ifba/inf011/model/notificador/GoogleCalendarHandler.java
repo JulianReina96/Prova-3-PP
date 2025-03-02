@@ -10,7 +10,15 @@ import br.edu.ifba.inf011.model.evento.Evento;
  *  CHAVE DO GOOGLE CALENDAR DA CADEIA DE REPONSABILIDADE DA NOTIFICAÇÃO
 */
 public class GoogleCalendarHandler extends AbstractNotifyHandler {
-
+	
+	public GoogleCalendarHandler(Notificador proximo) {
+		super(proximo);
+	}
+	
+	public GoogleCalendarHandler() {
+		super();
+	}
+	
 	@Override
 	public boolean devoNotificar(Evento evento) {
 		if (evento.iniciaEm(LocalDate.now()) && (evento.getPrioridade() >= 1 && evento.getPrioridade() <= 10))

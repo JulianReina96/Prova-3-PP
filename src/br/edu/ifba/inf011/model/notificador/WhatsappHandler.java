@@ -9,6 +9,14 @@ import br.edu.ifba.inf011.model.evento.Evento;
 */
 public class WhatsappHandler extends AbstractNotifyHandler{
 
+	public WhatsappHandler(Notificador proximo) {
+		super(proximo);
+	}
+	
+	public WhatsappHandler() {
+		super();
+	}
+	
 	@Override
 	public boolean devoNotificar(Evento evento) {
 		if (evento.iniciaEm(LocalDate.now()) && (evento.getPrioridade() == 10))

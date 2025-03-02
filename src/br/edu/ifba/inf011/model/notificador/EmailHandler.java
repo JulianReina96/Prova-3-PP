@@ -9,6 +9,14 @@ import br.edu.ifba.inf011.model.evento.Evento;
 */
 public class EmailHandler extends AbstractNotifyHandler{
 
+	public EmailHandler(Notificador proximo) {
+		super(proximo);
+	}
+	
+	public EmailHandler() {
+		super();
+	}
+	
 	@Override
 	public boolean devoNotificar(Evento evento) {
 		if (evento.iniciaEm(LocalDate.now()) && (evento.getPrioridade() >= 5))
