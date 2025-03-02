@@ -1,38 +1,40 @@
 package br.edu.ifba.inf011.model.notificador;
 
-import java.time.LocalDate;
-
 import br.edu.ifba.inf011.model.evento.Evento;
+import br.edu.ifba.inf011.model.notificador.Strategy.Prior5AndNowStrategy;
+import br.edu.ifba.inf011.model.notificador.Strategy.RegrasEnvioStrategy;
+import java.util.List;
 
 /*
  *  CHAVE DO EMAIL DA CADEIA DE REPONSABILIDADE DA NOTIFICAÇÃO
-*/
-public class EmailHandler extends AbstractNotifyHandler{
+ */
+public class EmailHandler extends AbstractNotifyHandler {
 
-	public EmailHandler(Notificador proximo) {
-		super(proximo);
-	}
-	
-	public EmailHandler() {
-		super();
-	}
-	
-	@Override
-	public boolean devoNotificar(Evento evento) {
-		if (evento.iniciaEm(LocalDate.now()) && (evento.getPrioridade() >= 5))
-			return true;
+    public EmailHandler(List<RegrasEnvioStrategy> regra, Notificador proximo) {
+        super(regra, proximo);
+    }
 
-		return false;
-	}
+    public EmailHandler(Notificador proximo) {
+        super(List.of(new Prior5AndNowStrategy()), proximo);
+    }
 
-	@Override
-	public void doNotificar(Evento evento) {
-		System.out.println("ENVIANDO PARA EMAIL");
-	}
-	
-	@Override
-	public void formatar(Evento evento) {
-		System.out.println("FORMATANDO MENSAGEM PARA EMAIL");
-	}
+    public EmailHandler(List<RegrasEnvioStrategy> regra) {
+        super(regra, null);
+    }
+
+    public EmailHandler() {
+        super(List.of(new Prior5AndNowStrategy()), null);
+    }
+
+    @Override
+    public void doNotificar(String mensagem) {
+        System.out.println("ENVIANDO " + mensagem + " PARA EMAIL");
+    }
+
+    @Override
+    public String formatar(Evento evento) {
+        System.out.println("FORMATANDO MENSAGEM PARA EMAIL");
+        return super.formatar(evento);
+    }
 
 }
