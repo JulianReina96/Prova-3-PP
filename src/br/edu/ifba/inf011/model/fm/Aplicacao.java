@@ -14,10 +14,14 @@ import br.edu.ifba.inf011.model.evento.builder.BuilderPartida;
 import br.edu.ifba.inf011.model.notificador.EmailHandler;
 import br.edu.ifba.inf011.model.notificador.GoogleCalendarHandler;
 import br.edu.ifba.inf011.model.notificador.Notificador;
+import br.edu.ifba.inf011.model.notificador.Strategy.Prior10AndNowStrategy;
 import br.edu.ifba.inf011.model.notificador.Strategy.Prior5AndNowStrategy;
+import br.edu.ifba.inf011.model.notificador.Strategy.RegrasEnvioStrategy;
+import br.edu.ifba.inf011.model.notificador.factory.NotificadorFactory;
 import br.edu.ifba.inf011.model.notificador.WhatsappHandler;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -67,10 +71,20 @@ public class Aplicacao extends AplicacaoCalendario {
         this.adicionarEvento(Lembrete.builder().setInicio(LocalDateTime.now().minus(2, ChronoUnit.DAYS)).setPrioridade(10).build(TipoEvento.LEMBRETE, "Evento prioridade 1, anteontem"));
 
         Collection<Evento> hoje = this.today();
+        
+        // Criar regras de envio
+        
+        List<RegrasEnvioStrategy> regrasEmail = Arrays.asList(new Prior5AndNowStrategy());
+        List<RegrasEnvioStrategy> regrasWhatsapp = Arrays.asList(new Prior10AndNowStrategy());
+        List<RegrasEnvioStrategy> regrasGoogleCalendar = Arrays.asList(new Prior10AndNowStrategy());
 
-        Notificador notify = new GoogleCalendarHandler(
-                new WhatsappHandler(List.of(new Prior5AndNowStrategy()), new EmailHandler()
-                ));
+        // Criar notificadores
+        Notificador email = NotificadorFactory.notificarEmail(regrasEmail, null);
+        Notificador whatsapp = NotificadorFactory.notificarWhatsapp(regrasWhatsapp, email);
+
+        Notificador notify = NotificadorFactory.notificarGoogleCalendar(regrasGoogleCalendar, whatsapp);
+ 
+          // Notificar eventos
 
         for (Evento e : hoje) {
             System.out.println(e.getDescricao());

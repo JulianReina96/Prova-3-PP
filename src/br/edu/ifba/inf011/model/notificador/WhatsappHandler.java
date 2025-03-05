@@ -14,18 +14,6 @@ public class WhatsappHandler extends AbstractNotifyHandler {
         super(regra, proximo);
     }
 
-    public WhatsappHandler(Notificador proximo) {
-        super(List.of(new Prior10AndNowStrategy()), proximo);
-    }
-
-    public WhatsappHandler(List<RegrasEnvioStrategy> regra) {
-        super(regra, null);
-    }
-
-    public WhatsappHandler() {
-        super(List.of(new Prior10AndNowStrategy()), null);
-    }
-
     @Override
     public void doNotificar(String mensagem) {
         System.out.println("ENVIANDO " + mensagem + " PARA WHATSAPP");

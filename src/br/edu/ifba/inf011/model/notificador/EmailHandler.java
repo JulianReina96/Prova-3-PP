@@ -14,18 +14,6 @@ public class EmailHandler extends AbstractNotifyHandler {
         super(regra, proximo);
     }
 
-    public EmailHandler(Notificador proximo) {
-        super(List.of(new Prior5AndNowStrategy()), proximo);
-    }
-
-    public EmailHandler(List<RegrasEnvioStrategy> regra) {
-        super(regra, null);
-    }
-
-    public EmailHandler() {
-        super(List.of(new Prior5AndNowStrategy()), null);
-    }
-
     @Override
     public void doNotificar(String mensagem) {
         System.out.println("ENVIANDO " + mensagem + " PARA EMAIL");
