@@ -1,5 +1,11 @@
 package br.edu.ifba.inf011.model.fm;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import br.edu.ifba.inf011.academico.DatabaseAcademico;
 import br.edu.ifba.inf011.model.Calendario;
 import br.edu.ifba.inf011.model.Equipe;
@@ -11,19 +17,12 @@ import br.edu.ifba.inf011.model.evento.Lembrete;
 import br.edu.ifba.inf011.model.evento.Partida;
 import br.edu.ifba.inf011.model.evento.TipoEvento;
 import br.edu.ifba.inf011.model.evento.builder.BuilderPartida;
-import br.edu.ifba.inf011.model.notificador.EmailHandler;
-import br.edu.ifba.inf011.model.notificador.GoogleCalendarHandler;
 import br.edu.ifba.inf011.model.notificador.Notificador;
 import br.edu.ifba.inf011.model.notificador.Strategy.Prior10AndNowStrategy;
+import br.edu.ifba.inf011.model.notificador.Strategy.Prior1AndTodayTo2DaysAgo;
 import br.edu.ifba.inf011.model.notificador.Strategy.Prior5AndNowStrategy;
 import br.edu.ifba.inf011.model.notificador.Strategy.RegrasEnvioStrategy;
 import br.edu.ifba.inf011.model.notificador.factory.NotificadorFactory;
-import br.edu.ifba.inf011.model.notificador.WhatsappHandler;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 public class Aplicacao extends AplicacaoCalendario {
 
@@ -76,16 +75,23 @@ public class Aplicacao extends AplicacaoCalendario {
         
         List<RegrasEnvioStrategy> regrasEmail = Arrays.asList(new Prior5AndNowStrategy());
         List<RegrasEnvioStrategy> regrasWhatsapp = Arrays.asList(new Prior10AndNowStrategy());
-        List<RegrasEnvioStrategy> regrasGoogleCalendar = Arrays.asList(new Prior10AndNowStrategy());
+        List<RegrasEnvioStrategy> regrasGoogleCalendar = Arrays.asList(new Prior10AndNowStrategy(), new Prior5AndNowStrategy(), new Prior1AndTodayTo2DaysAgo());
 
         // Criar notificadores
         Notificador email = NotificadorFactory.notificarEmail(regrasEmail, null);
         Notificador whatsapp = NotificadorFactory.notificarWhatsapp(regrasWhatsapp, email);
-
         Notificador notify = NotificadorFactory.notificarGoogleCalendar(regrasGoogleCalendar, whatsapp);
  
           // Notificar eventos
 
+        for (Evento e : hoje) {
+            System.out.println(e.getDescricao());
+            notify.Notificar(e);
+            System.out.println("\n\nNotificação do evento finalizada\n\n------------------------------------------------");
+        }
+        
+        whatsapp.setRegras(regrasGoogleCalendar);
+        
         for (Evento e : hoje) {
             System.out.println(e.getDescricao());
             notify.Notificar(e);
